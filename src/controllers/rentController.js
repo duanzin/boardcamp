@@ -23,7 +23,7 @@ export async function createRent(req, res) {
     }
 
     const gameRentals = await db.query(
-      `SELECT * FROM rentals WHERE gameId=$1 AND returnDate=null`,
+      `SELECT * FROM rentals WHERE "gameId"=$1 AND "returnDate" is null`,
       [gameId]
     );
     if (gameRentals.rows.length >= game.rows[0].stockTotal) {

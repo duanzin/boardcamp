@@ -15,7 +15,11 @@ export async function showCustomer(req, res) {
     const customer = await db.query(`SELECT * FROM customers WHERE id = $1;`, [
       id,
     ]);
-    res.send(customer.rows[0]);
+    if (customer.rows.length == 0) {
+      return res.sendStatus(404);
+    } else {
+      res.status(200).send(customer.rows[0]);
+    }
   } catch (err) {
     res.status(500).send(err.message);
   }

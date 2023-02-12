@@ -22,7 +22,7 @@ export async function showCustomer(req, res) {
 }
 
 export async function createCustomer(req, res) {
-    const { name, phone, cpf, birthday } = req.body;
+  const { name, phone, cpf, birthday } = req.body;
 
   try {
     const cpfExists = await db.query(`SELECT * FROM customers WHERE cpf = $1`, [
@@ -31,6 +31,7 @@ export async function createCustomer(req, res) {
     if (cpfExists.rows.length !== 0) {
       return res.sendStatus(409);
     }
+
     await db.query(
       `INSERT INTO customers (name,phone,cpf,birthday) VALUES ($1,$2,$3,$4)`,
       [name, phone, cpf, birthday]
@@ -41,4 +42,24 @@ export async function createCustomer(req, res) {
   }
 }
 
-export async function updateCustomer(req, res) {}
+export async function updateCustomer(req, res) {
+  const { name, phone, cpf, birthday } = req.body;
+  const { id } = req.params;
+
+  try {
+    const cpfExists = await db.query(`SELECT * FROM customers WHERE cpf = $1`, [
+      cpf,
+    ]);
+    if (cpfExists.rows.length !== 0) {
+      return res.sendStatus(409);
+    }
+
+    await db.query(
+      `UPDATE customers SET name=$1,phone=$2,birthday=$3,cpf=$4 WHERE id = $5;`,
+      [name, phone, birthday, cpf, id]
+    );
+    res.sendStatus(201);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+}

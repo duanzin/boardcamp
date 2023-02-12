@@ -12,7 +12,9 @@ export async function showCustomers(req, res) {
 export async function showCustomer(req, res) {
   const { id } = req.params;
   try {
-    const customer = await db.query(`SELECT * FROM customers WHERE id=${id}`);
+    const customer = await db.query(`SELECT * FROM customers WHERE id=$1`, [
+      id,
+    ]);
     if (customer.rows.length == 0) return res.sendStatus(404);
     res.send(customer.rows[0]);
   } catch (error) {
@@ -46,9 +48,10 @@ export async function updateCustomer(req, res) {
   const { id } = req.params;
 
   try {
-    const cpfExists = await db.query(`SELECT * FROM customers WHERE cpf = $1`, [
-      cpf,
-    ]);
+    const cpfExists = await db.query(
+      `SELECT * FROM customers WHERE cpf = $1 AND NOT id = $2`,
+      [cpf, id]
+    );
     if (cpfExists.rows.length !== 0) {
       return res.sendStatus(409);
     }

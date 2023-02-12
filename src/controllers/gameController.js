@@ -20,7 +20,7 @@ export async function createGame(req, res) {
       return res.sendStatus(409);
     }
     await db.query(
-      `INSERT INTO games (name,image,stockTotal,pricePerDay) VALUES ($1,$2,$3,$4)`,
+      `INSERT INTO games (name,image,"stockTotal","pricePerDay") VALUES ($1,$2,$3,$4)`,
       [name, image, stockTotal, pricePerDay]
     );
     return res.sendStatus(201);

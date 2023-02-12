@@ -3,7 +3,7 @@ export function validateSchema(schema) {
       const validation = schema.validate(req.body, { abortEarly: false });
   
       if (validation.error) {
-          return res.status(422).send(validation.error.details);
+          return res.status(400).send(validation.error.details);
       }
   
       next();

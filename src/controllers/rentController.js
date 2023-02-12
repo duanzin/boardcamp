@@ -31,7 +31,7 @@ export async function createRent(req, res) {
     }
 
     await db.query(
-      `INSERT INTO rentals (customedId,gameId,rentDate,daysRented,returnDate,originalPrice,delayFee) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+      `INSERT INTO rentals ("customerId","gameId","rentDate","daysRented",returnDate,"originalPrice",delayFee) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
       [
         customerId,
         gameId,

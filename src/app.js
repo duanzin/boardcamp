@@ -11,8 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use(gameRouter);
-app.use(customerRouter);
-app.use(rentRouter);
+app.use([gameRouter,customerRouter,rentRouter]);
 
-app.listen(5000);
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`O server está rodando na porta: ${port}`))

@@ -30,17 +30,12 @@ export async function createRent(req, res) {
       return res.sendStatus(400);
     }
 
+    const rentDate = new Date();
+    const originalPrice = daysRented * game.rows[0].pricePerDay;
+
     await db.query(
-      `INSERT INTO rentals ("customerId","gameId","rentDate","daysRented",returnDate,"originalPrice",delayFee) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-      [
-        customerId,
-        gameId,
-        dayjs().format("YYYY-MM-DD"),
-        daysRented,
-        null,
-        daysRented * game.rows[0].pricePerDay,
-        null,
-      ]
+      `INSERT INTO rentals ("customerId","gameId","rentDate","daysRented","returnDate","originalPrice","delayFee") VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+      [customerId, gameId, rentDate, daysRented, null, originalPrice, null]
     );
     res.sendStatus(201);
   } catch (err) {

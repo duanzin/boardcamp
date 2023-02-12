@@ -18,7 +18,7 @@ export async function createRent(req, res) {
       [customerId]
     );
     const game = await db.query(`SELECT * FROM games WHERE id = $1`, [gameId]);
-    if (game.rows.length !== 0 || customerExists.rows.length !== 0) {
+    if (game.rows.length == 0 || customerExists.rows.length == 0) {
       return res.sendStatus(400);
     }
 

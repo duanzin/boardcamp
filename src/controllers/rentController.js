@@ -62,11 +62,11 @@ export async function endRent(req, res) {
     const allowedTime = dayjs(rentDate)
       .add(daysRented, "day")
       .format("YYYY-MM-DD");
-      const date1 = dayjs(allowedTime);
-      const date2 = dayjs(returnDate);
+    const deadline = dayjs(allowedTime);
+    const endDate = dayjs(returnDate);
 
-    if (date1.isBefore(date2)) {
-      const delay = date2.diff(date1, "day");
+    if (deadline.isBefore(endDate)) {
+      const delay = endDate.diff(deadline, "day");
       const gameId = rental.rows[0].gameId;
       const pricePerDay = await db.query(
         `SELECT ("pricePerDay") FROM games WHERE id=$1`,

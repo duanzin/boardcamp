@@ -72,7 +72,8 @@ export async function endRent(req, res) {
       );
       const delayFee = delay * pricePerDay.rows[0].pricePerDay;
 
-      await db.query(`UPDATE rentals SET "delayFee"=${delayFee} WHERE id=$1`, [
+      await db.query(`UPDATE rentals SET "delayFee"=$1 WHERE id=$2`, [
+        delayFee,
         id,
       ]);
     }

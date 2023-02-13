@@ -6,7 +6,7 @@ import { validateSchema } from "../middlewares/validateSchema.js";
 const customerRouter = Router();
 
 customerRouter.get("/customers", showCustomers);
-customerRouter.get("/customers:id", showCustomer);
+customerRouter.get("/customers/:id", showCustomer);
 customerRouter.post("/customers", validateSchema(customerSchema), createCustomer);
 customerRouter.put("/customers/:id", validateSchema(customerSchema), updateCustomer)
 

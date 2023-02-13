@@ -3,7 +3,9 @@ import dayjs from "dayjs";
 
 export async function showRentals(req, res) {
   try {
-    const rents = await db.query("SELECT * FROM rentals");
+    const rents = await db.query(
+      `SELECT rentals.*, json_build_object('id', customers.id, 'name', customers.name) AS customer,json_build_object( 'id', games.id, 'name', games.name) AS game FROM rentals JOIN customers ON rentals."customerId" = customers.id JOIN games ON rentals."gameId" = games.id`
+    );
     res.send(rents.rows);
   } catch (err) {
     res.status(500).send(err.message);

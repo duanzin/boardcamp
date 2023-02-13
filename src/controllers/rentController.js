@@ -1,4 +1,5 @@
 import { db } from "../config/database.js";
+import dayjs from "dayjs";
 
 export async function showRentals(req, res) {
   try {
@@ -30,7 +31,7 @@ export async function createRent(req, res) {
       return res.sendStatus(400);
     }
 
-    const rentDate = new Date();
+    const rentDate = dayjs().format("YYYY-MM-DD");
     const originalPrice = daysRented * game.rows[0].pricePerDay;
 
     await db.query(
@@ -47,18 +48,37 @@ export async function endRent(req, res) {
   const { id } = req.params;
 
   try {
-    const rentalExists = await db.query(`SELECT * FROM rentals WHERE id = $1`, [
-      id,
-    ]);
+    const rental = await db.query(`SELECT * FROM rentals WHERE id = $1`, [id]);
 
-    if (rentalExists.rows.length !== 0) {
+    if (rental.rows.length == 0) {
       return res.sendStatus(404);
-    } else if (rentalExists.rows[0].returnDate !== null) {
+    } else if (rental.rows[0].returnDate !== null) {
       return res.sendStatus(400);
     }
 
+    const daysRented = rental.rows[0].daysRented;
+    const rentDate = rental.rows[0].rentDate;
+    const returnDate = dayjs().format("YYYY-MM-DD");
+    const allowedTime = dayjs(rentDate)
+      .add(daysRented, "day")
+      .format("YYYY-MM-DD");
+
+    if (allowedTime.isBefore(returnDate)) {
+      const delay = returnDate.diff(allowedTime, "day");
+      const gameId = rental.rows[0].gameId;
+      const pricePerDay = await db.query(
+        `SELECT ("pricePerDay") FROM games WHERE id=$1`,
+        [gameId]
+      );
+      const delayFee = delay * pricePerDay.rows[0].pricePerDay;
+
+      await db.query(`UPDATE rentals SET "delayFee"=${delayFee} WHERE id=$1`, [
+        id,
+      ]);
+    }
+
     await db.query(`UPDATE rentals SET returnDate=$1 WHERE id = $2;`, [
-      dayjs().format("YYYY-MM-DD"),
+      returnDate,
       id,
     ]);
     res.sendStatus(200);
@@ -75,7 +95,7 @@ export async function deleteRent(req, res) {
       id,
     ]);
 
-    if (rentalExists.rows.length !== 0) {
+    if (rentalExists.rows.length == 0) {
       return res.sendStatus(404);
     } else if (rentalExists.rows[0].returnDate == null) {
       return res.sendStatus(400);

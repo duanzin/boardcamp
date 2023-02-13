@@ -77,7 +77,7 @@ export async function endRent(req, res) {
       ]);
     }
 
-    await db.query(`UPDATE rentals SET returnDate=$1 WHERE id = $2;`, [
+    await db.query(`UPDATE rentals SET "returnDate"=$1 WHERE id = $2;`, [
       returnDate,
       id,
     ]);

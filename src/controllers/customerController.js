@@ -10,14 +10,12 @@ export async function showCustomers(req, res) {
 }
 
 export async function showCustomer(req, res) {
-  const { id } = req.params;
   try {
-    const customer = await db.query(`SELECT * FROM customers WHERE id = $1`, [
+    const { id } = req.params;
+    const customer = await db.query("SELECT * FROM customers WHERE id = $1;", [
       id,
     ]);
-    if (!customer.rows[0]) {
-      return res.sendStatus(404);
-    }
+    if (!customer.rowCount) return res.sendStatus(404);
     res.status(200).send(customer.rows[0]);
   } catch (err) {
     res.status(500).send(err.message);
